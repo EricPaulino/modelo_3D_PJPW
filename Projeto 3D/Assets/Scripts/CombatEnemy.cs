@@ -7,11 +7,12 @@ using UnityEngine.AI;
 public class CombatEnemy : MonoBehaviour
 {
     [Header("Atributtes")] 
-    public float totalHealth;
+    public float totalHealth = 75;
     public float attackDamage;
     public float moveSpeed;
     public float LookRadius;
     public float colliderRadius = 2f;
+    public float rotationSpeed;
 
     [Header("Components")] 
     private Animator anim;
@@ -34,35 +35,41 @@ public class CombatEnemy : MonoBehaviour
 
     void Update()
     {
-        float distance = Vector3.Distance(player.position, transform.position);
-        if (distance <= LookRadius)
+        if (totalHealth > 0)
         {
-            
-            // personagem no raio de visão
-            agent.isStopped = false;
-            if (!Attacking)
+            float distance = Vector3.Distance(player.position, transform.position);
+            if (distance <= LookRadius)
             {
-                agent.SetDestination(player.position);
-                anim.SetBool("Run Forward", true);
-                Running = true;
-            }
-            if( distance <= agent.stoppingDistance)
-            {
-                StartCoroutine("Attack");
-                agent.isStopped = true;
+
+                // personagem no raio de visão
+                agent.isStopped = false;
+                if (!Attacking)
+                {
+                    agent.SetDestination(player.position);
+                    anim.SetBool("Run Forward", true);
+                    Running = true;
+                }
+
+                if (distance <= agent.stoppingDistance)
+                {
+                    StartCoroutine("Attack");
+                    agent.isStopped = true;
+                    LookTarget();
+                }
+                else
+                {
+                    Attacking = false;
+                }
+
             }
             else
             {
+                //personagem quando não está no raio de visão
+                anim.SetBool("Run Forward", false);
+                agent.isStopped = true;
+                Running = false;
                 Attacking = false;
             }
-            
-        }
-        else
-        {   //personagem quando não está no raio de visão
-            anim.SetBool("Run Forward", false);
-            agent.isStopped = true;
-            Running = false;
-            Attacking = false;
         }
     }
 
@@ -73,7 +80,7 @@ public class CombatEnemy : MonoBehaviour
     }
     IEnumerator Attack()
     {
-        if (!waitFor)
+        if (!waitFor && !hit)
         {
             waitFor = true;
             Attacking = true;
@@ -109,6 +116,7 @@ public class CombatEnemy : MonoBehaviour
             StopCoroutine("Attack");
             anim.SetTrigger("Take Damage");
             hit = true;
+            StartCoroutine("RecoveryFromHit");
         }
         else
         {
@@ -124,5 +132,12 @@ public class CombatEnemy : MonoBehaviour
         anim.SetBool("Bite Attack", false);
         hit = false;
         waitFor = false;
+    }
+
+    void LookTarget()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        Quaternion LookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, LookRotation, Time.deltaTime * rotationSpeed);
     }
 }

@@ -9,6 +9,9 @@ public class player : MonoBehaviour
     public float Speed;
     public float SmoothRotTime;
     public float Gravity;
+    public float Damage = 25;
+    
+    
     public float colliderRadius;
     public List<Transform> enemyList = new List<Transform>();
         
@@ -115,7 +118,12 @@ public class player : MonoBehaviour
 
         foreach (Transform e in enemyList)
         {
-            Debug.Log(e.name);
+            CombatEnemy Enemy = e.GetComponent<CombatEnemy>();
+
+            if (Enemy != null)
+            {
+                Enemy.getHit(Damage);
+            }
         }
 
         yield return new WaitForSeconds(0.5f);
