@@ -10,18 +10,21 @@ public class player : MonoBehaviour
     public float SmoothRotTime;
     public float Gravity;
     public float Damage = 25;
-    
-    
+    public float totalHealth;
+
+
     public float colliderRadius;
     public List<Transform> enemyList = new List<Transform>();
-        
-        
+
+
     private Vector3 moveDirection;
     private float TurnSmoothVelocity;
     private CharacterController Con;
     private Transform Cam;
     private bool isWalking;
     public Animator Anim;
+    private bool WaitFor;
+    private bool isHiting;
 
     // Start is called before the first frame update
     void Start()
@@ -64,7 +67,7 @@ public class player : MonoBehaviour
                     transform.rotation = Quaternion.Euler(0, SmoothAngle, 0f);
                     //aramazena a direção
                     moveDirection = Quaternion.Euler(0f, angle, 0f) * Vector3.forward * Speed;
-                
+
                     Anim.SetInteger("Transition", 0);
                     isWalking = true;
                 }
@@ -74,9 +77,9 @@ public class player : MonoBehaviour
                     moveDirection = Vector3.zero;
                     Anim.SetBool("Walk", false);
                 }
-                
+
             }
-            else if(isWalking)
+            else if (isWalking)
             {
                 Anim.SetInteger("Transition", 2);
                 Anim.SetBool("Walk", false);
@@ -111,7 +114,10 @@ public class player : MonoBehaviour
 
     IEnumerator Attack()
     {
-        Anim.SetBool("Attack", true);
+        if (!WaitFor && !isHiting)
+        {
+            WaitFor = true;
+            Anim.SetBool("Attack", true);
         Anim.SetInteger("Transition", 1);
         yield return new WaitForSeconds(1f);
         GetEnemiesList();
@@ -127,11 +133,14 @@ public class player : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.5f);
-            Anim.SetInteger("Transition", 0);
-            Anim.SetBool("Attack", false);
-    }
+        
+        Anim.SetInteger("Transition", 0);
+        Anim.SetBool("Attack", false);
+        WaitFor = false;
+        }
+}
 
-    void GetEnemiesList()
+void GetEnemiesList()
     {
         enemyList.Clear();
         foreach (Collider c in Physics.OverlapSphere((transform.position + transform.forward * colliderRadius), colliderRadius))
@@ -141,6 +150,33 @@ public class player : MonoBehaviour
                 enemyList.Add(c.transform);
             }
         }
+        
+    }
+    
+    public void getHit(float Damage)
+    {
+        totalHealth -= Damage;
+        if (totalHealth > 0)
+        {
+            //vivo
+            StopCoroutine("Attack");
+            Anim.SetInteger("Transition", 3);
+            isHiting = true;
+            StartCoroutine("RecoveryFromHit");
+        }
+        else
+        {
+            Anim.SetTrigger("die");
+            //morto
+        }
+    }
+
+    IEnumerator RecoveryFromHit()
+    {
+        yield return new WaitForSeconds(1f);
+        Anim.SetInteger("Transition", 0);
+        isHiting = false;
+        Anim.SetBool("Attack", false);
         
     }
 

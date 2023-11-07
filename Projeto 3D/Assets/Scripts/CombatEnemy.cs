@@ -101,7 +101,8 @@ public class CombatEnemy : MonoBehaviour
         {
             if (c.gameObject.CompareTag("player"))
             {
-                Debug.Log("bateu");
+                c.gameObject.GetComponent<player>().getHit(attackDamage);
+                
             }
         }
         
