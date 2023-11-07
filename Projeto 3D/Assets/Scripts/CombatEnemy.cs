@@ -22,6 +22,7 @@ public class CombatEnemy : MonoBehaviour
     private bool Attacking;
     private bool waitFor;
     private bool hit;
+    public bool PLayerisCompletelyDead;
 
     [Header("Others")] 
     private Transform player;
@@ -80,7 +81,7 @@ public class CombatEnemy : MonoBehaviour
     }
     IEnumerator Attack()
     {
-        if (!waitFor && !hit)
+        if (!waitFor && !hit && !PLayerisCompletelyDead)
         {
             waitFor = true;
             Attacking = true;
@@ -92,6 +93,15 @@ public class CombatEnemy : MonoBehaviour
             //yield return new WaitForSeconds(1f);
             waitFor = false;
         }
+
+        if (PLayerisCompletelyDead)
+        {
+            anim.SetBool("Run Forward", false);
+            anim.SetBool("Bite Attack",  false);
+            Running = false;
+            Attacking = false;
+            agent.isStopped = true;
+        }
         
     }
 
@@ -102,7 +112,7 @@ public class CombatEnemy : MonoBehaviour
             if (c.gameObject.CompareTag("player"))
             {
                 c.gameObject.GetComponent<player>().getHit(attackDamage);
-                
+                PLayerisCompletelyDead = c.gameObject.GetComponent<player>().isDead;
             }
         }
         

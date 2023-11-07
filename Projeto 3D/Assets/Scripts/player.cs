@@ -11,8 +11,7 @@ public class player : MonoBehaviour
     public float Gravity;
     public float Damage = 25;
     public float totalHealth;
-
-
+    public bool isDead;
     public float colliderRadius;
     public List<Transform> enemyList = new List<Transform>();
 
@@ -37,13 +36,17 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
-        geteMouseinput();
+        if (!isDead)
+        {
+            Move();
+            geteMouseinput(); 
+        }
+        
     }
 
     private void Move()
     {
-        if (Con.isGrounded)
+        if (Con.isGrounded && isDead)
         {
 
 
@@ -166,6 +169,7 @@ void GetEnemiesList()
         }
         else
         {
+            isDead = true;
             Anim.SetTrigger("die");
             //morto
         }

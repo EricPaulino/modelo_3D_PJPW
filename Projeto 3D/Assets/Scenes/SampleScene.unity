@@ -27387,6 +27387,7 @@ MonoBehaviour:
   LookRadius: 18.1
   colliderRadius: 2
   rotationSpeed: 0
+  PLayerisCompletelyDead: 0
 --- !u!195 &872097378
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -76093,11 +76094,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c02f2818ee24854cabd1da840cf1e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 7
+  Speed: 8
   SmoothRotTime: 0.1
   Gravity: 10
   Damage: 25
   totalHealth: 100
+  isDead: 0
   colliderRadius: 0.97
   enemyList: []
   Anim: {fileID: 0}
