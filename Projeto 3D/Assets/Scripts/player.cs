@@ -46,7 +46,7 @@ public class player : MonoBehaviour
 
     private void Move()
     {
-        if (Con.isGrounded && isDead)
+        if (Con.isGrounded)
         {
 
 
@@ -122,7 +122,7 @@ public class player : MonoBehaviour
             WaitFor = true;
             Anim.SetBool("Attack", true);
         Anim.SetInteger("Transition", 1);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.4f);
         GetEnemiesList();
 
         foreach (Transform e in enemyList)
@@ -159,6 +159,7 @@ void GetEnemiesList()
     public void getHit(float Damage)
     {
         totalHealth -= Damage;
+        
         if (totalHealth > 0)
         {
             //vivo

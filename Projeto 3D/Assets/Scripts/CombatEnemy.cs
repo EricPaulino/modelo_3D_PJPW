@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = System.Random;
+
 
 public class CombatEnemy : MonoBehaviour
 {
@@ -26,6 +29,11 @@ public class CombatEnemy : MonoBehaviour
 
     [Header("Others")] 
     private Transform player;
+
+    [Header("WayPoints")] public List<Transform> WayPoints = new List<Transform>();
+    public int CPIndex;
+    public float PathDistance;
+    
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -66,11 +74,31 @@ public class CombatEnemy : MonoBehaviour
             else
             {
                 //personagem quando não está no raio de visão
+                //agent.isStopped = true;
                 anim.SetBool("Run Forward", false);
-                agent.isStopped = true;
                 Running = false;
                 Attacking = false;
+                MoveToWayPoint();
             }
+        }
+    }
+
+    void MoveToWayPoint()
+    {
+        if (WayPoints.Count > 0 )
+        {
+            float distance = Vector3.Distance(WayPoints[CPIndex].position, transform.position);
+            agent.destination = WayPoints[CPIndex].position;
+            
+            if (distance <= PathDistance)
+            {
+                //proximo ponto
+                //CPIndex = Random.Range(0, WayPoints.Count);
+                //falta ajeitar essa parte 
+            }
+            anim.SetBool("Run Forward", true);
+            Running = true;
+            
         }
     }
 
@@ -121,6 +149,7 @@ public class CombatEnemy : MonoBehaviour
     public void getHit(float Damage)
     {
         totalHealth -= Damage;
+        
         if (totalHealth > 0)
         {
             //vivo
