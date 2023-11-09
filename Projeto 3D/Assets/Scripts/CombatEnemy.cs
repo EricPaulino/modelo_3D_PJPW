@@ -31,7 +31,7 @@ public class CombatEnemy : MonoBehaviour
     private Transform player;
 
     [Header("WayPoints")] public List<Transform> WayPoints = new List<Transform>();
-    public int CPIndex;
+    public int CurrentPathIndex;
     public float PathDistance;
     
     void Start()
@@ -87,14 +87,13 @@ public class CombatEnemy : MonoBehaviour
     {
         if (WayPoints.Count > 0 )
         {
-            float distance = Vector3.Distance(WayPoints[CPIndex].position, transform.position);
-            agent.destination = WayPoints[CPIndex].position;
+            float distance = Vector3.Distance(WayPoints[CurrentPathIndex].position, transform.position);
+            agent.destination = WayPoints[CurrentPathIndex].position;
             
             if (distance <= PathDistance)
             {
                 //proximo ponto
-                //CPIndex = Random.Range(0, WayPoints.Count);
-                //falta ajeitar essa parte 
+                //urrentPathIndex = Random.Range(0, WayPoints.Count);
             }
             anim.SetBool("Run Forward", true);
             Running = true;
