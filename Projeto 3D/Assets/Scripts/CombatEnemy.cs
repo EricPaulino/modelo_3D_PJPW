@@ -10,7 +10,7 @@ using Random = System.Random;
 public class CombatEnemy : MonoBehaviour
 {
     [Header("Atributtes")] 
-    public float totalHealth = 75;
+    public float totalHealth = 100;
     public float attackDamage;
     public float moveSpeed;
     public float LookRadius;
